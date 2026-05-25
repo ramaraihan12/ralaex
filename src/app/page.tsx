@@ -1,66 +1,86 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
+import { useState, useCallback } from 'react'
+import { AppShell } from '@/components/AppShell'
+import { PeriodSelector } from '@/components/dashboard/PeriodSelector'
+import { SummaryCards } from '@/components/dashboard/SummaryCards'
+import { DonutChart } from '@/components/dashboard/DonutChart'
+import { AreaChart } from '@/components/dashboard/AreaChart'
+import { BarChart } from '@/components/dashboard/BarChart'
+import { BudgetProgress } from '@/components/dashboard/BudgetProgress'
+import { RecentTransactions } from '@/components/dashboard/RecentTransactions'
+import { useDashboard } from '@/lib/hooks/useDashboard'
+import type { DashboardPeriod } from '@/lib/hooks/useDashboard'
+import { BudgetAlertBanner } from '@/components/budget/BudgetAlertBanner'
+import '@/styles/dashboard.css'
+
+export default function DashboardPage() {
+  const [period, setPeriod] = useState<DashboardPeriod>('month')
+  const [customStart, setCustomStart] = useState<string | undefined>()
+  const [customEnd, setCustomEnd] = useState<string | undefined>()
+
+  const handlePeriodChange = useCallback(
+    (newPeriod: DashboardPeriod, start?: string, end?: string) => {
+      setPeriod(newPeriod)
+      if (newPeriod === 'custom') {
+        setCustomStart(start)
+        setCustomEnd(end)
+      }
+    },
+    []
+  )
+
+  const { data, loading, error } = useDashboard(period, customStart, customEnd)
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <AppShell>
+      <div className="page-container dashboard-page">
+        <h1>Beranda</h1>
+
+        <PeriodSelector
+          period={period}
+          onChange={handlePeriodChange}
+          customStart={customStart}
+          customEnd={customEnd}
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {loading ? (
+          <div className="components-loading">
+            <span>Memuat data...</span>
+          </div>
+        ) : error ? (
+          <div className="empty-state">
+            <h3>Gagal Memuat</h3>
+            <p>{error}</p>
+          </div>
+        ) : data ? (
+          <>
+            <BudgetAlertBanner budgets={data.budgets} />
+
+            <SummaryCards
+              totalIncome={data.summary.totalIncome}
+              totalOutcome={data.summary.totalOutcome}
+              balance={data.summary.balance}
+              remainingBudget={data.summary.remainingBudget}
             />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+
+            <div className="charts-grid">
+              <DonutChart data={data.categoryBreakdown} />
+              <AreaChart data={data.trend} />
+              <BarChart data={data.monthlyComparison} />
+            </div>
+
+            <BudgetProgress budgets={data.budgets} />
+
+            <div style={{ marginTop: 'var(--space-lg)' }}>
+              <RecentTransactions
+                transactions={data.recentTransactions}
+                categories={data.categories}
+              />
+            </div>
+          </>
+        ) : null}
+      </div>
+    </AppShell>
+  )
 }

@@ -1,0 +1,220 @@
+.recurring-page {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.recurring-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.recurring-header h1 {
+  font-size: var(--font-size-xl);
+}
+
+.recurring-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.recurring-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: all var(--transition-fast);
+}
+
+.recurring-card:hover {
+  box-shadow: 0 2px 12px var(--color-shadow);
+}
+
+.recurring-card.inactive {
+  opacity: 0.55;
+}
+
+.recurring-card-body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.recurring-card-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  flex: 1;
+}
+
+.recurring-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.recurring-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.recurring-card-category {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recurring-card-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recurring-card-amount {
+  flex-shrink: 0;
+}
+
+.recurring-card-nominal {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.recurring-card-nominal.income {
+  color: var(--color-secondary);
+}
+
+.recurring-card-nominal.outcome {
+  color: var(--color-danger);
+}
+
+.recurring-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.recurring-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.recurring-card-frequency {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+}
+
+.recurring-card-next {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.recurring-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.recurring-card-type-badge {
+  display: flex;
+  align-items: center;
+}
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+}
+
+.income-badge {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+
+.outcome-badge {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.recurring-card-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.recurring-toggle {
+  margin-right: var(--space-sm);
+}
+
+.day-picker {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.day-picker-btn {
+  flex: 1;
+  min-width: 42px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.day-picker-btn.active {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: 600;
+}
+
+.day-picker-btn:hover:not(.active) {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 769px) {
+  .recurring-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .day-picker-btn {
+    min-width: 48px;
+    height: 38px;
+  }
+}
