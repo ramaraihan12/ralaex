@@ -1,10 +1,5 @@
 const CACHE_NAME = 'ralaex-v1'
 
-const STATIC_ASSETS = [
-  '/',
-  '/manifest.json',
-]
-
 self.addEventListener('install', () => {
   self.skipWaiting()
 })
