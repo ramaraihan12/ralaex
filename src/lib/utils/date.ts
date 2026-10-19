@@ -33,8 +33,8 @@ export function formatLocalDate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
-export function getWeekRange(): { start: string; end: string } {
-  const now = new Date()
+// Weeks run Monday to Sunday.
+export function getWeekRange(now = new Date()): { start: string; end: string } {
   const day = now.getDay()
   const diff = day === 0 ? 6 : day - 1
   const monday = new Date(now)
@@ -47,13 +47,19 @@ export function getWeekRange(): { start: string; end: string } {
   }
 }
 
-export function getMonthRange(): { start: string; end: string } {
-  const now = new Date()
+export function getMonthRange(now = new Date()): { start: string; end: string } {
   const start = new Date(now.getFullYear(), now.getMonth(), 1)
   const end = new Date(now.getFullYear(), now.getMonth() + 1, 0)
   return {
     start: formatLocalDate(start),
     end: formatLocalDate(end),
+  }
+}
+
+export function getYearRange(now = new Date()): { start: string; end: string } {
+  return {
+    start: `${now.getFullYear()}-01-01`,
+    end: `${now.getFullYear()}-12-31`,
   }
 }
 

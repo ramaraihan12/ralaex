@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Transaction, Category, Budget } from '@/lib/types'
-import { formatLocalDate, getWeekRange, getMonthRange } from '@/lib/utils/date'
+import { getWeekRange, getMonthRange, getYearRange } from '@/lib/utils/date'
 
 export type DashboardPeriod = 'week' | 'month' | 'year' | 'custom'
 
@@ -63,15 +63,6 @@ const MONTHS_ID = [
   'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
 ]
 
-function getYearRange(now: Date): { start: string; end: string } {
-  const start = new Date(now.getFullYear(), 0, 1)
-  const end = new Date(now.getFullYear(), 11, 31)
-  return {
-    start: formatLocalDate(start),
-    end: formatLocalDate(end),
-  }
-}
-
 export function getPeriodRange(
   period: DashboardPeriod,
   customStart?: string,
@@ -80,14 +71,13 @@ export function getPeriodRange(
   if (period === 'custom' && customStart && customEnd) {
     return { start: customStart, end: customEnd }
   }
-  const now = new Date()
   switch (period) {
     case 'week':
       return getWeekRange()
     case 'month':
       return getMonthRange()
     case 'year':
-      return getYearRange(now)
+      return getYearRange()
     default:
       return getMonthRange()
   }
