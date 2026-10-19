@@ -72,9 +72,13 @@ npx supabase status -o env   # API_URL and ANON_KEY go into .env.local
 
 Add the user in Studio at http://127.0.0.1:54323 the same way as above.
 
-## Checks
+## Tests
 
-There are no automated tests yet. CI runs lint and a production build:
+```bash
+npm test
+```
+
+The tests cover the date and currency helpers, the budget range and alert logic, and the recurring next-date calculation. CI runs lint, the tests and a production build. Lint and build are also worth running:
 
 ```bash
 npm run lint
@@ -88,8 +92,7 @@ npm run build
 - One shared account is on purpose. It keeps the app simple, but it also means RLS is "logged in or not". Multi-user data separation would need a `user_id` column and per-user policies.
 - The cron routes don't do their job yet. The middleware redirects them to `/login`, and even past that they use the anon key, which RLS blocks without a session. They need an `/api` exclusion and a service-role client. Until then, recurring items won't post on their own.
 - `xlsx` is the old 0.18.5 build from npm, which has open advisories. SheetJS now ships fixed versions from its own CDN, so that's the next dependency to swap.
-- No tests. The date helpers and the budget math in `useDashboard` are the first things I'd cover.
-
+- Tests only cover the pure helpers. The hooks and components that talk to Supabase have none.
 ## License
 
 MIT

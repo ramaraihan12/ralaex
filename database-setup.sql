@@ -88,18 +88,23 @@ ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE recurring_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Authenticated full access" ON categories;
 CREATE POLICY "Authenticated full access" ON categories
   FOR ALL USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated full access" ON transactions;
 CREATE POLICY "Authenticated full access" ON transactions
   FOR ALL USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated full access" ON budgets;
 CREATE POLICY "Authenticated full access" ON budgets
   FOR ALL USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated full access" ON recurring_transactions;
 CREATE POLICY "Authenticated full access" ON recurring_transactions
   FOR ALL USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated full access" ON notifications;
 CREATE POLICY "Authenticated full access" ON notifications
   FOR ALL USING (auth.role() = 'authenticated');
 
@@ -115,25 +120,29 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_categories_updated_at ON categories;
 CREATE TRIGGER update_categories_updated_at
   BEFORE UPDATE ON categories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_transactions_updated_at ON transactions;
 CREATE TRIGGER update_transactions_updated_at
   BEFORE UPDATE ON transactions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_budgets_updated_at ON budgets;
 CREATE TRIGGER update_budgets_updated_at
   BEFORE UPDATE ON budgets
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_recurring_transactions_updated_at ON recurring_transactions;
 CREATE TRIGGER update_recurring_transactions_updated_at
   BEFORE UPDATE ON recurring_transactions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
 -- STORAGE: receipts bucket
--- ⚠️ Jalankan SQL ini di Supabase SQL Editor (https://supabase.com/dashboard)
+-- Jalankan SQL ini di Supabase SQL Editor (https://supabase.com/dashboard)
 --    Jika bucket "receipts" belum ada, INSERT di bawah akan membuatkannya.
 --    Policies memberikan akses upload/read/delete hanya ke user authenticated.
 -- ============================================================================
@@ -141,18 +150,21 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('receipts', 'receipts', false)
 ON CONFLICT (id) DO NOTHING;
 
+DROP POLICY IF EXISTS "Authenticated users can upload receipts" ON storage.objects;
 CREATE POLICY "Authenticated users can upload receipts"
 ON storage.objects
 FOR INSERT
 TO authenticated
 WITH CHECK (bucket_id = 'receipts');
 
+DROP POLICY IF EXISTS "Authenticated users can read receipts" ON storage.objects;
 CREATE POLICY "Authenticated users can read receipts"
 ON storage.objects
 FOR SELECT
 TO authenticated
 USING (bucket_id = 'receipts');
 
+DROP POLICY IF EXISTS "Authenticated users can delete receipts" ON storage.objects;
 CREATE POLICY "Authenticated users can delete receipts"
 ON storage.objects
 FOR DELETE
