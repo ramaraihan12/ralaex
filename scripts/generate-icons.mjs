@@ -1,13 +1,15 @@
-const sharp = require('sharp')
-const fs = require('fs')
-const path = require('path')
+import { existsSync, mkdirSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
 
-const logoPath = path.join(__dirname, '..', 'public', 'logo', 'RaLaEXfullLogo.png')
-const iconsDir = path.join(__dirname, '..', 'public', 'icons')
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
+const logoPath = path.join(root, 'public', 'logo', 'RaLaEXfullLogo.png')
+const iconsDir = path.join(root, 'public', 'icons')
 const sizes = [192, 512]
 
-if (!fs.existsSync(iconsDir)) {
-  fs.mkdirSync(iconsDir, { recursive: true })
+if (!existsSync(iconsDir)) {
+  mkdirSync(iconsDir, { recursive: true })
 }
 
 async function generate() {
