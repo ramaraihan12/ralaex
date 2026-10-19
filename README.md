@@ -39,7 +39,7 @@ Next.js 16, React 19, TypeScript, Supabase (Postgres, Auth, Storage, Realtime) t
 You need Node 20.9 or newer and a Supabase project (the free tier is enough).
 
 ```bash
-git clone https://github.com/ramaraihan12/ralaexV2.0 ralaex
+git clone https://github.com/ramaraihan12/ralaex
 cd ralaex
 npm ci
 cp .env.example .env.local
