@@ -12,7 +12,7 @@ export async function login(prevState: { error?: string }, formData: FormData) {
     return { error: 'Username dan password harus diisi' }
   }
 
-  const email = username === 'ralaex' ? 'ralaex@ralaex.app' : `${username}@ralaex.app`
+  const email = `${username}@ralaex.app`
 
   const cookieStore = await cookies()
 
@@ -30,7 +30,8 @@ export async function login(prevState: { error?: string }, formData: FormData) {
               cookieStore.set(name, value, options)
             )
           } catch {
-            //
+            // Same as lib/supabase/server.ts: only throws outside a server
+            // action, and the middleware refreshes the session anyway.
           }
         },
       },
