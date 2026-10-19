@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
 CREATE INDEX IF NOT EXISTS idx_notifications_created ON notifications(created_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_notifications_yearly_unique
-  ON notifications(type, (EXTRACT(YEAR FROM created_at)))
+  ON notifications(type, (EXTRACT(YEAR FROM (created_at AT TIME ZONE 'UTC'))))
   WHERE type = 'yearly_cleanup';
 
 -- ============================================================================
