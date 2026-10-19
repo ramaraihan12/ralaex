@@ -17,7 +17,7 @@ It's a PWA rather than a native app so it installs on both phones and works on t
 - Receipt photos (JPG, PNG, WebP, HEIC) attached to a transaction, stored in a private Supabase Storage bucket.
 - Dashboard for this week, this month, this year or a custom range: totals, spending per category, an income vs spending trend and a 6-month comparison.
 - Weekly or monthly budgets per category. An expense that pushes a budget past 80% or 100% writes a notification, and the dashboard shows a banner.
-- Recurring transactions (salary, internet bill) on a weekly or monthly schedule.
+- Recurring transactions (salary, internet bill) on a weekly or monthly schedule. The templates and next-date logic are in; posting them automatically is still pending (see Notes).
 - Categories with their own icon and color.
 - Export to Excel, CSV or PDF, and a yearly cleanup page that lets you download a year before deleting it.
 - Installable as a PWA.
@@ -26,7 +26,7 @@ It's a PWA rather than a native app so it installs on both phones and works on t
 
 - Next.js App Router. The pages are mostly client components that query Supabase directly with the public anon key. Row Level Security on every table only lets an authenticated session in.
 - Login is a server action. The username is turned into `<username>@ralaex.app` and signed in with Supabase Auth, so the household only has to remember a short name.
-- `middleware.ts` refreshes the session cookie on each request and sends logged-out visitors to `/login`.
+- `proxy.ts` refreshes the session cookie on each request and sends logged-out visitors to `/login`.
 - The notification bell listens on a Supabase Realtime channel for new rows in `notifications`.
 - Two routes under `src/app/api/` are meant for Vercel Cron (`vercel.json`): one posts due recurring transactions, the other reminds me once a year to back up old data. Both check a `CRON_SECRET` bearer token.
 
@@ -90,9 +90,10 @@ npm run build
 ## Notes
 
 - One shared account is on purpose. It keeps the app simple, but it also means RLS is "logged in or not". Multi-user data separation would need a `user_id` column and per-user policies.
-- The cron routes don't do their job yet. The middleware redirects them to `/login`, and even past that they use the anon key, which RLS blocks without a session. They need an `/api` exclusion and a service-role client. Until then, recurring items won't post on their own.
+- The cron routes don't do their job yet. The proxy redirects them to `/login`, and even past that they use the anon key, which RLS blocks without a session. They need an `/api` exclusion and a service-role client. Until then, recurring items won't post on their own.
 - `xlsx` is the old 0.18.5 build from npm, which has open advisories. SheetJS now ships fixed versions from its own CDN, so that's the next dependency to swap.
-- Tests only cover the pure helpers. The hooks and components that talk to Supabase have none.
+- Tests only cover the pure helpers. The hooks and components that talk to Supabase have none.
+
 ## License
 
 MIT
