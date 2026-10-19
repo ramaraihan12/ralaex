@@ -16,6 +16,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - run: npm test
       # Pages are prerendered at build time and the Supabase client refuses
       # to start without a URL and key. Dummy values are enough for that.
       - run: npm run build
