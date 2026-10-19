@@ -31,7 +31,7 @@ export async function login(prevState: { error?: string }, formData: FormData) {
             )
           } catch {
             // Same as lib/supabase/server.ts: only throws outside a server
-            // action, and the middleware refreshes the session anyway.
+            // action, and the proxy refreshes the session anyway.
           }
         },
       },
