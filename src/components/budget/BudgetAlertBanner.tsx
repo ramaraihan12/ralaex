@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { AlertTriangle, X } from 'lucide-react'
 import type { BudgetProgressData } from '@/lib/hooks/useDashboard'
+import '@/styles/budget.css'
 
 interface BudgetAlertBannerProps {
   budgets: BudgetProgressData[]
