@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Transaction, Category, Budget } from '@/lib/types'
-import { getWeekRange, getMonthRange, getYearRange } from '@/lib/utils/date'
+import { formatLocalDate, getWeekRange, getMonthRange, getYearRange } from '@/lib/utils/date'
 import { budgetPercentage, budgetRange } from '@/lib/utils/budget'
 
 export type DashboardPeriod = 'week' | 'month' | 'year' | 'custom'
@@ -247,9 +247,9 @@ export function useDashboard(
 
       const now = new Date()
       const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
-      const sixMonthsAgoStr = sixMonthsAgo.toISOString().split('T')[0]
+      const sixMonthsAgoStr = formatLocalDate(sixMonthsAgo)
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-      const endOfMonthStr = endOfMonth.toISOString().split('T')[0]
+      const endOfMonthStr = formatLocalDate(endOfMonth)
 
       const monthlyData = await fetchAll(
         supabase
@@ -270,8 +270,7 @@ export function useDashboard(
       }
 
       for (const row of monthlyData) {
-        const d = new Date(row.date as string)
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        const key = (row.date as string).slice(0, 7)
         if (monthlyMap[key]) {
           if ((row.type as string) === 'income') {
             monthlyMap[key].income += row.amount as number

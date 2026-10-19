@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { FileUpload } from './FileUpload'
 import { formatRupiah, parseRupiah } from '@/lib/utils/currency'
+import { formatLocalDate } from '@/lib/utils/date'
 import type { Transaction, Category } from '@/lib/types'
 
 interface TransactionFormProps {
@@ -44,7 +45,7 @@ export function TransactionForm({
   const [amountDisplay, setAmountDisplay] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [description, setDescription] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(formatLocalDate(new Date()))
   const [receiptUrl, setReceiptUrl] = useState<string | undefined>(undefined)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,7 +64,7 @@ export function TransactionForm({
       setAmountDisplay('')
       setCategoryId('')
       setDescription('')
-      setDate(new Date().toISOString().slice(0, 10))
+      setDate(formatLocalDate(new Date()))
       setReceiptUrl(undefined)
     }
     setError(null)

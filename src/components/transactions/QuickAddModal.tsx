@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, TrendingUp, TrendingDown } from 'lucide-react'
 import { FileUpload } from './FileUpload'
 import { formatRupiah, parseRupiah } from '@/lib/utils/currency'
+import { formatLocalDate } from '@/lib/utils/date'
 import type { Category } from '@/lib/types'
 
 interface QuickAddModalProps {
@@ -32,7 +33,7 @@ export function QuickAddModal({
   const [amountDisplay, setAmountDisplay] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [description, setDescription] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(formatLocalDate(new Date()))
   const [receiptUrl, setReceiptUrl] = useState<string | undefined>(undefined)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -46,7 +47,7 @@ export function QuickAddModal({
       setAmountDisplay('')
       setCategoryId('')
       setDescription('')
-      setDate(new Date().toISOString().slice(0, 10))
+      setDate(formatLocalDate(new Date()))
       setReceiptUrl(undefined)
       setError(null)
     }
