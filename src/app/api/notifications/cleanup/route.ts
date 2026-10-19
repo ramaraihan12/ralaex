@@ -4,10 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 const PAGE_SIZE = 1000
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  const expected = `Bearer ${process.env.CRON_SECRET}`
-
-  if (!authHeader || authHeader !== expected) {
+  const secret = process.env.CRON_SECRET
+  // Without this check an unset secret would accept "Bearer undefined".
+  if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
