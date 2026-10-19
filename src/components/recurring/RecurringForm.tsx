@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { formatRupiah, parseRupiah } from '@/lib/utils/currency'
+import { firstExecution } from '@/lib/utils/recurring'
 import type { Category } from '@/lib/types'
 import type { RecurringWithCategory } from '@/lib/hooks/useRecurring'
 
@@ -38,42 +39,6 @@ interface RecurringFormProps {
 }
 
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
-
-function computeNextExecution(frequency: 'weekly' | 'monthly', dayOfWeek: number | null, dayOfMonth: number | null): string {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  if (frequency === 'weekly' && dayOfWeek !== null) {
-    const todayDow = today.getDay()
-    const targetDow = dayOfWeek + 1 === 7 ? 0 : dayOfWeek + 1
-    let daysUntil = targetDow - todayDow
-    if (daysUntil <= 0) daysUntil += 7
-    const next = new Date(today)
-    next.setDate(today.getDate() + daysUntil)
-    return next.toISOString().split('T')[0]
-  }
-
-  if (frequency === 'monthly' && dayOfMonth !== null) {
-    const year = today.getFullYear()
-    const month = today.getMonth()
-    const currentDay = today.getDate()
-
-    if (currentDay <= dayOfMonth) {
-      const lastDay = new Date(year, month + 1, 0).getDate()
-      const d = Math.min(dayOfMonth, lastDay)
-      return `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
-    }
-
-    const nextMonth = new Date(year, month + 1, 1)
-    const ny = nextMonth.getFullYear()
-    const nm = nextMonth.getMonth()
-    const lastDay = new Date(ny, nm + 1, 0).getDate()
-    const d = Math.min(dayOfMonth, lastDay)
-    return `${ny}-${String(nm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
-  }
-
-  return today.toISOString().split('T')[0]
-}
 
 export function RecurringForm({
   open,
@@ -143,7 +108,7 @@ export function RecurringForm({
 
     const finalDow = frequency === 'weekly' ? dayOfWeek : null
     const finalDom = frequency === 'monthly' ? dayOfMonth : null
-    const nextExecution = computeNextExecution(frequency, finalDow, finalDom)
+    const nextExecution = firstExecution(frequency, finalDow, finalDom)
 
     setSaving(true)
     if (isEditing && onUpdate) {

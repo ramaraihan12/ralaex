@@ -1,17 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
-function computeNextDate(frequency: 'weekly' | 'monthly', currentDate: string): string {
-  const d = new Date(currentDate)
-
-  if (frequency === 'weekly') {
-    d.setDate(d.getDate() + 7)
-  } else {
-    d.setMonth(d.getMonth() + 1)
-  }
-
-  return d.toISOString().split('T')[0]
-}
+import { nextExecution } from '@/lib/utils/recurring'
 
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET
@@ -81,11 +70,11 @@ export async function GET(request: NextRequest) {
       continue
     }
 
-    const nextExecution = computeNextDate(r.frequency, r.next_execution)
+    const following = nextExecution(r.frequency, r.next_execution, r.day_of_month)
 
     await supabase
       .from('recurring_transactions')
-      .update({ next_execution: nextExecution })
+      .update({ next_execution: following })
       .eq('id', r.id)
 
     const categoryName = r.categories?.name || 'Kategori'
