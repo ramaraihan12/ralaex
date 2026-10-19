@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-import { getWeekRange, getMonthRange } from './date'
+import { budgetAlert, budgetPercentage, budgetRange } from './budget'
 
 function getPeriodLabel(period: 'weekly' | 'monthly'): string {
   return period === 'weekly' ? 'minggu ini' : 'bulan ini'
@@ -25,18 +25,7 @@ export async function checkBudgetNotifications(categoryId: string) {
       categories?: { name: string } | null
     }
 
-    let budgetStart: string
-    let budgetEnd: string
-
-    if (b.period === 'weekly') {
-      const wr = getWeekRange()
-      budgetStart = wr.start
-      budgetEnd = wr.end
-    } else {
-      const mr = getMonthRange()
-      budgetStart = mr.start
-      budgetEnd = mr.end
-    }
+    const { start: budgetStart, end: budgetEnd } = budgetRange(b.period)
 
     let query = supabase
       .from('transactions')
@@ -51,9 +40,10 @@ export async function checkBudgetNotifications(categoryId: string) {
 
     const { data: outcomeData } = await query
     const spent = (outcomeData || []).reduce((sum, t) => sum + t.amount, 0)
-    const percentage = b.amount > 0 ? Math.round((spent / b.amount) * 100) : 0
+    const percentage = budgetPercentage(spent, b.amount)
+    const notifType = budgetAlert(percentage)
 
-    if (percentage < 80) continue
+    if (!notifType) continue
 
     const categoryName = b.category_id
       ? (b.categories?.name || 'Kategori')
@@ -61,8 +51,7 @@ export async function checkBudgetNotifications(categoryId: string) {
 
     const periodLabel = getPeriodLabel(b.period)
 
-    const isExceeded = percentage >= 100
-    const notifType = isExceeded ? 'budget_exceeded' : 'budget_warning'
+    const isExceeded = notifType === 'budget_exceeded'
 
     const { data: existingNotif } = await supabase
       .from('notifications')

@@ -4,6 +4,7 @@ import { createElement } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
 import { getIcon } from '@/lib/utils/icons'
 import { formatRupiah } from '@/lib/utils/currency'
+import { budgetAlert } from '@/lib/utils/budget'
 import type { BudgetWithCategory } from '@/lib/hooks/useBudgets'
 
 interface BudgetCardProps {
@@ -27,8 +28,9 @@ function getStatusBadge(percentage: number): {
   label: string
   className: string
 } {
-  if (percentage >= 100) return { label: 'Melebihi', className: 'badge-danger' }
-  if (percentage >= 80) return { label: 'Hampir Penuh', className: 'badge-warning' }
+  const alert = budgetAlert(percentage)
+  if (alert === 'budget_exceeded') return { label: 'Melebihi', className: 'badge-danger' }
+  if (alert === 'budget_warning') return { label: 'Hampir Penuh', className: 'badge-warning' }
   return { label: 'Aman', className: 'badge-safe' }
 }
 

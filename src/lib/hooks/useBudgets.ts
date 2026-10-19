@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Budget, Category } from '@/lib/types'
-import { getWeekRange, getMonthRange } from '@/lib/utils/date'
+import { budgetPercentage, budgetRange } from '@/lib/utils/budget'
 
 export interface BudgetWithCategory extends Budget {
   categories?: { name: string; icon: string; color: string } | null
@@ -44,18 +44,7 @@ export function useBudgets() {
     const spendingMap: Record<string, BudgetSpending> = {}
 
     for (const b of budgetList) {
-      let budgetStart: string
-      let budgetEnd: string
-
-      if (b.period === 'weekly') {
-        const wr = getWeekRange()
-        budgetStart = wr.start
-        budgetEnd = wr.end
-      } else {
-        const mr = getMonthRange()
-        budgetStart = mr.start
-        budgetEnd = mr.end
-      }
+      const { start: budgetStart, end: budgetEnd } = budgetRange(b.period)
 
       let query = supabase
         .from('transactions')
@@ -74,7 +63,7 @@ export function useBudgets() {
       spendingMap[b.id] = {
         id: b.id,
         spent,
-        percentage: b.amount > 0 ? Math.round((spent / b.amount) * 100) : 0,
+        percentage: budgetPercentage(spent, b.amount),
       }
     }
 

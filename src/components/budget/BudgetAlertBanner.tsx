@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { AlertTriangle, X } from 'lucide-react'
 import type { BudgetProgressData } from '@/lib/hooks/useDashboard'
+import { budgetAlert } from '@/lib/utils/budget'
 import '@/styles/budget.css'
 
 interface BudgetAlertBannerProps {
@@ -12,11 +13,11 @@ interface BudgetAlertBannerProps {
 export function BudgetAlertBanner({ budgets }: BudgetAlertBannerProps) {
   const [dismissed, setDismissed] = useState(false)
 
-  const nearLimit = budgets.filter((b) => b.percentage >= 80)
+  const nearLimit = budgets.filter((b) => budgetAlert(b.percentage) !== null)
 
   if (dismissed || nearLimit.length === 0) return null
 
-  const hasExceeded = nearLimit.some((b) => b.percentage >= 100)
+  const hasExceeded = nearLimit.some((b) => budgetAlert(b.percentage) === 'budget_exceeded')
 
   return (
     <div className={`budget-alert-banner${hasExceeded ? ' has-exceeded' : ''}`}>
@@ -24,7 +25,7 @@ export function BudgetAlertBanner({ budgets }: BudgetAlertBannerProps) {
         <AlertTriangle size={18} className="budget-alert-icon" />
         <div className="budget-alert-info">
           <span className="budget-alert-title">
-            {nearLimit.some((b) => b.percentage >= 100)
+            {hasExceeded
               ? 'Anggaran melebihi batas!'
               : 'Anggaran hampir penuh!'}
           </span>

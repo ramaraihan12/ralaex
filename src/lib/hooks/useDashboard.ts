@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Transaction, Category, Budget } from '@/lib/types'
 import { getWeekRange, getMonthRange, getYearRange } from '@/lib/utils/date'
+import { budgetPercentage, budgetRange } from '@/lib/utils/budget'
 
 export type DashboardPeriod = 'week' | 'month' | 'year' | 'custom'
 
@@ -296,19 +297,7 @@ export function useDashboard(
           categories?: { name: string; icon: string; color: string } | null
         }
 
-        let spent = 0
-        let budgetStart: string
-        let budgetEnd: string
-
-        if (b.period === 'weekly') {
-          const weekRange = getWeekRange()
-          budgetStart = weekRange.start
-          budgetEnd = weekRange.end
-        } else {
-          const monthRange = getMonthRange()
-          budgetStart = monthRange.start
-          budgetEnd = monthRange.end
-        }
+        const { start: budgetStart, end: budgetEnd } = budgetRange(b.period)
 
         let outcomeQuery = supabase
           .from('transactions')
@@ -322,7 +311,7 @@ export function useDashboard(
         }
 
         const outcomeData = await fetchAll(outcomeQuery as unknown as Record<string, unknown>)
-        spent = outcomeData.reduce((sum, t) => sum + (t.amount as number), 0)
+        const spent = outcomeData.reduce((sum, t) => sum + (t.amount as number), 0)
 
         const isOverall = !b.category_id
         const categoryInfo = b.categories as
@@ -338,7 +327,7 @@ export function useDashboard(
           period: b.period,
           budget_amount: b.amount,
           spent,
-          percentage: b.amount > 0 ? Math.round((spent / b.amount) * 100) : 0,
+          percentage: budgetPercentage(spent, b.amount),
           is_overall: isOverall,
         })
 
