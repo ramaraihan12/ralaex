@@ -12,8 +12,9 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - logo (logo files)
+     * - logo, icons (logo files)
+     * - PWA and crawler files that must load before login
      */
-    '/((?!_next/static|_next/image|favicon.ico|logo).*)',
+    '/((?!_next/static|_next/image|favicon.ico|logo|icons|sw\\.js|manifest\\.json|robots\\.txt).*)',
   ],
 }
