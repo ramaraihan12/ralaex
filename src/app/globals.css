@@ -249,15 +249,6 @@ button:active:not(:disabled) {
 }
 
 @media (max-width: 428px) {
-  .summary-cards {
-    gap: var(--space-sm);
-  }
-
-  .summary-card {
-    width: 180px;
-    padding: var(--space-sm) var(--space-md);
-  }
-
   .charts-grid {
     gap: var(--space-sm);
   }
