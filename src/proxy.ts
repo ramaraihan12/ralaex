@@ -14,7 +14,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - logo, icons (logo files)
      * - PWA and crawler files that must load before login
+     * - api routes, which check their own CRON_SECRET bearer token
      */
-    '/((?!_next/static|_next/image|favicon.ico|logo|icons|sw\\.js|manifest\\.json|robots\\.txt).*)',
+    '/((?!_next/static|_next/image|favicon.ico|logo|icons|sw\\.js|manifest\\.json|robots\\.txt|api/).*)',
   ],
 }
