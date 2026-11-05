@@ -1,0 +1,26 @@
+name: demo upkeep
+
+# Free Supabase projects pause after a quiet week, which is what killed the first
+# demo. This logs in as the demo account a few times a day, reads the data and
+# tops up whatever is missing, so the dashboard isn't empty in a new month either.
+on:
+  schedule:
+    - cron: '23 */8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/seed-demo.mjs
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.DEMO_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.DEMO_SUPABASE_ANON_KEY }}
