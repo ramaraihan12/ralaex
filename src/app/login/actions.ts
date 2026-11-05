@@ -3,6 +3,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { loginEmail } from '@/lib/demo'
 
 export async function login(prevState: { error?: string }, formData: FormData) {
   const username = formData.get('username') as string | null
@@ -12,7 +13,7 @@ export async function login(prevState: { error?: string }, formData: FormData) {
     return { error: 'Username dan password harus diisi' }
   }
 
-  const email = `${username}@ralaex.app`
+  const email = loginEmail(username)
 
   const cookieStore = await cookies()
 

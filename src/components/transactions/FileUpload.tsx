@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { Upload, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { isDemo } from '@/lib/demo'
 
 function isURL(str: string): boolean {
   try {
@@ -110,6 +111,10 @@ export function FileUpload({ value, onChange }: FileUploadProps) {
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+  }
+
+  if (isDemo) {
+    return <p className="file-upload-off">Upload foto dimatikan di demo publik.</p>
   }
 
   return (

@@ -144,3 +144,24 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
 }
+
+.login-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.login-demo code {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.login-demo p {
+  color: var(--color-text-secondary);
+}

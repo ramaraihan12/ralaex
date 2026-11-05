@@ -223,6 +223,11 @@
   font-size: var(--font-size-xs);
 }
 
+.file-upload-off {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
 .file-upload-spinner {
   width: 20px;
   height: 20px;
