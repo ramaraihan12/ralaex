@@ -4,6 +4,8 @@ A household finance app I built for my wife and me. We share one login, both of 
 
 It's a PWA rather than a native app so it installs on both phones and works on the laptop too, with nothing to publish to an app store.
 
+**Live demo:** https://ralaex-app.vercel.app. Log in with `demo@example.com` / `demo-ralaex-2026` (the form comes filled in). Every visitor shares that one account and all the entries are fictional, so you'll see what others typed, and please don't type in anything real. Receipt upload is turned off there. It runs on Supabase's free tier, which pauses a project after a quiet week. A scheduled job keeps it awake, but if the login ever fails, that's the likely reason.
+
 <p>
   <img src="docs/dashboard.png" alt="Dashboard on desktop" width="72%">
   <img src="docs/mobile.png" alt="Dashboard on a phone" width="22%">
@@ -26,7 +28,7 @@ It's a PWA rather than a native app so it installs on both phones and works on t
 
 - Next.js App Router. The pages are mostly client components that query Supabase directly with the public anon key. Row Level Security on every table only lets an authenticated session in.
 - Login is a server action. The username is turned into `<username>@ralaex.app` and signed in with Supabase Auth, so the household only has to remember a short name.
-- `proxy.ts` refreshes the session cookie on each request and sends logged-out visitors to `/login`.
+- `src/proxy.ts` refreshes the session cookie on each request and sends logged-out visitors to `/login`.
 - The notification bell listens on a Supabase Realtime channel for new rows in `notifications`.
 - Two routes under `src/app/api/` are meant for Vercel Cron (`vercel.json`): one posts due recurring transactions, the other reminds me once a year to back up old data. Both check a `CRON_SECRET` bearer token.
 
@@ -53,6 +55,7 @@ Then open http://localhost:3000.
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL from Supabase, Project Settings > API |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | The anon (public) key from the same page |
 | `CRON_SECRET` | Any long random string. Only the cron routes use it |
+| `NEXT_PUBLIC_DEMO_MODE` | Optional, leave it unset. `true` on the public demo prints the shared login and hides receipt upload |
 
 ### Database
 
@@ -90,7 +93,9 @@ npm run build
 ## Notes
 
 - One shared account is on purpose. It keeps the app simple, but it also means RLS is "logged in or not". Multi-user data separation would need a `user_id` column and per-user policies.
-- The cron routes don't do their job yet. The proxy redirects them to `/login`, and even past that they use the anon key, which RLS blocks without a session. They need an `/api` exclusion and a service-role client. Until then, recurring items won't post on their own.
+- The cron routes don't do their job yet. They use the anon key, which RLS blocks without a session, so they need a service-role client. Until then, recurring items won't post on their own.
+- The public demo is this same code with `NEXT_PUBLIC_DEMO_MODE=true`, on its own Supabase project with only fictional data and sign-ups off. The flag just hides the upload button. Uploads go straight from the browser to Supabase, so the real block is dropping the `Authenticated users can upload receipts` policy on that project.
+- `scripts/seed-demo.mjs` fills the demo in as the demo user and only adds what's missing. The `demo upkeep` workflow runs it a few times a day, which keeps the project from pausing, rolls the data into each new month and puts back anything a visitor deleted. GitHub switches scheduled workflows off after 60 days without repo activity, so it needs turning back on after a quiet stretch.
 - `xlsx` is the old 0.18.5 build from npm, which has open advisories. SheetJS now ships fixed versions from its own CDN, so that's the next dependency to swap.
 - Tests only cover the pure helpers. The hooks and components that talk to Supabase have none.
 
