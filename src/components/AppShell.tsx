@@ -11,6 +11,7 @@ import type { Category } from '@/lib/types'
 import '@/styles/layout.css'
 import '@/styles/transactions.css'
 import '@/styles/components.css'
+import '@/styles/master.css'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [quickAddOpen, setQuickAddOpen] = useState(false)
